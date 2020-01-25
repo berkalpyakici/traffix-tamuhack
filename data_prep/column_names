@@ -1,14 +1,14 @@
-'ID'
-'Source'
-'TMC'
-'Severity'
-'Start_Time'
-'End_Time'
-'Start_Lat'
-'Start_Lng'
-'End_Lat'
-'End_Lng'
-'Distance(mi)'
+'ID' - cleaned
+'Source' - dropped
+'TMC' - categorized
+'Severity' - keep, categorical
+'Start_Time' - nice, none missing
+'End_Time' - nice, none missing
+'Start_Lat' - complete, normal
+'Start_Lng' - complete, normal
+'End_Lat' - BAD. only two values
+'End_Lng' - BAD. only two values
+'Distance(mi)' - Looks good
 'Description'
 'Number'
 'Street'
