@@ -1,0 +1,91 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v3.8.6">
+    <title>TrafFIX</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href='{% static "/dist/bootstrap/css/bootstrap.min.css" %}' rel="stylesheet">
+    <link href='{% static "/dist/fontawesome/css/all.css" %}' rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+        <div class="jumbotron mt-3">
+            <h1>TrafFIX</h1>
+            <p class="lead">This example is a quick exercise to illustrate how the bottom navbar works.</p>
+            <a class="btn btn-lg btn-primary" href="/docs/4.4/components/navbar/" role="button">View navbar docs &raquo;</a>
+        </div>
+    </div>
+
+    <div class="text-center p-5">
+        <h1>
+            <i class="fas fa-chevron-down"></i>
+        </h1>
+    </div>
+
+    <div class="container">
+        <h3>Build Your Query:</h3>
+        <p>Select the parameters that may affect...</p>
+        <div class="row row-cols-2">
+            <div class="col pb-3">
+                <button type="button" class="btn btn-lg btn-light btn-block p-4"><i class="fas fa-traffic-light"></i> Traffic Lights</button>
+            </div>
+            <div class="col pb-3">
+                <button type="button" class="btn btn-lg btn-light btn-block p-4"><i class="fas fa-traffic-light"></i> Stop Signs</button>
+            </div>
+            <div class="col pb-3">
+                <button type="button" class="btn btn-lg btn-light btn-block p-4"><i class="fas fa-traffic-light"></i> Junctions</button>
+            </div>
+            <div class="col pb-3">
+                <button type="button" class="btn btn-lg btn-light btn-block p-4"><i class="fas fa-traffic-light"></i> Railway</button>
+            </div>
+            <div class="col pb-3">
+                <button type="button" class="btn btn-lg btn-light btn-block p-4"><i class="fas fa-traffic-light"></i> Public Transport Stations</button>
+            </div>
+            <div class="col pb-3">
+                <button type="button" class="btn btn-lg btn-light btn-block p-4"><i class="fas fa-traffic-light"></i> Give Way</button>
+            </div>
+            <div class="col pb-3">
+                <button type="button" class="btn btn-lg btn-light btn-block p-4"><i class="fas fa-traffic-light"></i> Crossing</button>
+            </div>
+            <div class="col pb-3">
+                <button type="button" class="btn btn-lg btn-light btn-block p-4"><i class="fas fa-traffic-light"></i> Bump</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">TrafFIX - Traffic Accidents Analytics Tool</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#"></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                </li>
+                <li class="nav-item dropup">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdown10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropup</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown10">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src='{% static "/dist/bootstrap/js/bootstrap.bundle.min.js" %}'></script></body>
+</html>
