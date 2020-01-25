@@ -130,3 +130,6 @@ dmypy.json
 
 # CSV / Data prep 
 *.csv
+
+# Ignore idea files
+.idea
