@@ -37,6 +37,9 @@
             <input id="slider-severity" type="range" min="0" max="4" step="1" value="0" />
         </div>
         <div class="map-overlay-inner">
+            <h4 class="m-0">Accidents Per Capita</h4>
+        </div>
+        <div class="map-overlay-inner">
             <div id="legend" class="legend">
                 <div class="bar"></div>
                 <div style="text-align: center;" class="pt-2">Severity of Incident</div>
@@ -130,8 +133,11 @@
         ];
 
         function filterByTime(time) {
-            return;
-            var filters = ['==', 'time', time];
+            if (time > 0) {
+                var filters = ['==', 'h', time];
+            } else {
+                var filters = ['>=', 'h', 0];
+            }
 
             states.forEach(state => {
                 map.setFilter(`accidents_${state}`, filters);
@@ -146,7 +152,7 @@
             if (severity > 0) {
                 var filters = ['==', 'severity', severity];
             } else {
-                var filters = ['>', 'severity', severity]
+                var filters = ['>', 'severity', 0]
             }
 
             states.forEach(state => {
@@ -164,13 +170,87 @@
                 data: "static/data/"+state+".json",
                 cluster: true,
                 clusterMaxZoom: 9, // Max zoom to cluster points on
-                clusterRadius: 20 // Radius of each cluster when clustering points (defaults to 50)*/
+                clusterRadius: 10 // Radius of each cluster when clustering points (defaults to 50)*/
             });
+
+            map.addLayer(
+{
+'id': `accidents_${state}_heatmap`,
+'type': 'heatmap',
+'source': `layer_${state}`,
+'maxzoom': 9,
+'paint': {
+// Increase the heatmap weight based on frequency and property magnitude
+'heatmap-weight': [
+'interpolate',
+['linear'],
+['get', 'mag'],
+0,
+0,
+6,
+1
+],
+// Increase the heatmap color weight weight by zoom level
+// heatmap-intensity is a multiplier on top of heatmap-weight
+'heatmap-intensity': [
+'interpolate',
+['linear'],
+['zoom'],
+0,
+1,
+9,
+3
+],
+// Color ramp for heatmap.  Domain is 0 (low) to 1 (high).
+// Begin color ramp at 0-stop with a 0-transparancy color
+// to create a blur-like effect.
+'heatmap-color': [
+'interpolate',
+['linear'],
+['heatmap-density'],
+0,
+'rgba(33,102,172,0)',
+0.2,
+'rgb(103,169,207)',
+0.4,
+'rgb(209,229,240)',
+0.6,
+'rgb(253,219,199)',
+0.8,
+'rgb(239,138,98)',
+1,
+'rgb(178,24,43)'
+],
+// Adjust the heatmap radius by zoom level
+'heatmap-radius': [
+'interpolate',
+['linear'],
+['zoom'],
+0,
+2,
+9,
+20
+],
+// Transition from heatmap to circle layer by zoom level
+'heatmap-opacity': [
+'interpolate',
+['linear'],
+['zoom'],
+7,
+1,
+9,
+0
+]
+}
+},
+'waterway-label'
+);
 
             map.addLayer({
                 'id': `accidents_${state}`,
                 'type': 'circle',
                 source: `layer_${state}`,
+                'minzoom': 8,
                 'paint': {
                     // make circles larger as the user zooms from z12 to z22
                     'circle-radius': {
