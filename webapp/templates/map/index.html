@@ -28,8 +28,13 @@
     <div class="map-overlay bottom">
         <div class="map-overlay-inner">
             <h4 class="m-0">Time of the Day</h4>
-            <label id="time"></label>
+            <label id="time">00:00 - 23:59</label>
             <input id="slider" type="range" min="0" max="24" step="1" value="0" />
+        </div>
+        <div class="map-overlay-inner">
+            <h4 class="m-0">Severity</h4>
+            <label id="severity">All</label>
+            <input id="slider-severity" type="range" min="0" max="4" step="1" value="0" />
         </div>
         <div class="map-overlay-inner">
             <div id="legend" class="legend">
@@ -50,18 +55,10 @@
                     <a class="nav-link" href="#"></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
+                    <a class="nav-link" href="#">About</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                </li>
-                <li class="nav-item dropup">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdown10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropup</a>
-                    <div class="dropdown-menu" aria-labelledby="dropdown10">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Analytics</a>
                 </li>
             </ul>
         </div>
@@ -77,6 +74,24 @@
             zoom: 4,
             center: [-122.447303, 37.753574]
         });
+    </script>
+    <script>
+
+    var states = ["SC", "OR", "CA", "NC", "UT", "OK", "NE", "LA", "MN", "FL", "TX", "RI", "VA", "MI", "AZ", "TN", "WA", "GA", "AL", "MD",
+    "CO", "PA", "NY", "IL", "CT", "NJ", "NH", "MA", "OH", "MO", "DE", "IN", "KY", "IA", "NV", "WI", "NM", "KS", "MS", "ME", "WV", "ID", "VT",
+    "WY", "AR", "MT", "SD", "ND"]
+
+    map.on('load', function () {
+
+        var layers = map.getStyle().layers;
+
+        var labelLayerId;
+        for (var i = 0; i < layers.length; i++) {
+            if (layers[i].type === 'symbol' && layers[i].layout['text-field']) {
+                labelLayerId = layers[i].id;
+                break;
+            }
+        }
 
         times = [
             '00:00 - 23:59',
@@ -106,79 +121,40 @@
             '<i class="fas fa-moon"></i> 23:00 - 23:59',
         ];
 
-        function filterBy(time) {
+        severities = [
+            'All',
+            'Least',
+            'Medium',
+            'High',
+            'Extreme'
+        ];
+
+        function filterByTime(time) {
+            return;
             var filters = ['==', 'time', time];
-            //map.setFilter('earthquake-circles', filters);
-            //map.setFilter('earthquake-labels', filters);
+
+            states.forEach(state => {
+                map.setFilter(`accidents_${state}`, filters);
+            });
             
             // Set the label to the month
             document.getElementById('time').innerHTML = times[time];
         }
-        
-        /*map.on('load', function() {
-            map.addLayer({
-                'id': 'population',
-                'type': 'circle',
-                'source': {
-                    type: 'vector',
-                    url: 'mapbox://examples.8fgz4egr'
-                },
-                'source-layer': 'sf2010',
-                'paint': {
-                    // make circles larger as the user zooms from z12 to z22
-                    'circle-radius': {
-                        'base': 1.75,
-                        'stops': [
-                            [12, 2],
-                            [22, 180]
-                        ]
-                    },
-        
-        // color circles by ethnicity, using a match expression
-        // https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-match
-                    'circle-color': [
-                        'match',
-                        ['get', 'ethnicity'],
-                        'White',
-                        '#fbb03b',
-                        'Black',
-                        '#223b53',
-                        'Hispanic',
-                        '#e55e5e',
-                        'Asian',
-                        '#3bb2d0',
-                        '#ccc' //other
-                    ]
-                }
-            });
 
-            filterBy(0);
+        function filterBySeverity(severity) {
 
-            document
-                .getElementById('slider')
-                .addEventListener('input', function(e) {
-                var month = parseInt(e.target.value, 10);
-                filterBy(month);
-            });
-
-        }); */
-    </script>
-    <script>
-
-    var states = ["SC", "OR", "CA", "NC", "UT", "OK", "NE", "LA", "MN", "FL", "TX", "RI", "VA", "MI", "AZ", "TN", "WA", "GA", "AL", "MD",
-    "CO", "PA", "NY", "IL", "CT", "NJ", "NH", "MA", "OH", "MO", "DE", "IN", "KY", "IA", "NV", "WI", "NM", "KS", "MS", "ME", "WV", "ID", "VT",
-    "WY", "AR", "MT", "SD", "ND"]
-
-    map.on('load', function () {
-
-        var layers = map.getStyle().layers;
-
-        var labelLayerId;
-        for (var i = 0; i < layers.length; i++) {
-            if (layers[i].type === 'symbol' && layers[i].layout['text-field']) {
-                labelLayerId = layers[i].id;
-                break;
+            if (severity > 0) {
+                var filters = ['==', 'severity', severity];
+            } else {
+                var filters = ['>', 'severity', severity]
             }
+
+            states.forEach(state => {
+                map.setFilter(`accidents_${state}`, filters);
+            });
+            
+            // Set the label to the month
+            document.getElementById('severity').innerHTML = severities[severity];
         }
 
         states.forEach(state => {
@@ -214,6 +190,23 @@
                         ]
                 }
             });
+        });
+
+        filterBySeverity(0);
+        filterByTime(0);
+
+        document
+            .getElementById('slider-severity')
+            .addEventListener('input', function(e) {
+            var severity = parseInt(e.target.value, 10);
+            filterBySeverity(severity);
+        });
+
+        document
+            .getElementById('slider')
+            .addEventListener('input', function(e) {
+            var month = parseInt(e.target.value, 10);
+            filterByTime(month);
         });
     });
     </script>
