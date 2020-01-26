@@ -1,0 +1,213 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v3.8.6">
+    <title>TrafFIX</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href='{% static "/libs/bootstrap/css/bootstrap.min.css" %}' rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link href='{% static "/libs/fontawesome/css/all.css" %}' rel="stylesheet">
+
+    <!-- Application CSS -->
+    <link href='{% static "/css/app.css" %}' rel="stylesheet">
+
+    <!-- MapBox -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.4.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.4.1/mapbox-gl.css' rel='stylesheet' />
+  </head>
+  <body>
+    <div id='map'></div>
+
+    <div class="map-overlay bottom">
+        <div class="map-overlay-inner">
+            <h4 class="m-0">Time of the Day</h4>
+            <label id="time">00:00 - 23:59</label>
+            <input id="slider" type="range" min="0" max="24" step="1" value="0" />
+        </div>
+        <div class="map-overlay-inner">
+            <h4 class="m-0">Severity</h4>
+            <label id="severity">All</label>
+            <input id="slider-severity" type="range" min="0" max="4" step="1" value="0" />
+        </div>
+        <div class="map-overlay-inner">
+            <div id="legend" class="legend">
+                <div class="bar"></div>
+                <div style="text-align: center;" class="pt-2">Severity of Incident</div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">TrafFIX - Traffic Accidents Analytics Tool</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#"></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Analytics</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src='{% static "/libs/bootstrap/js/bootstrap.bundle.min.js" %}'></script></body>
+    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYmVya2FscHlha2ljaSIsImEiOiJjazV1ZW4yaG4wajFsM2pwZ3RreTk2c3BrIn0.9F6MXxHDy9AiNeK4L3p2hQ';
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/light-v10',
+            zoom: 4,
+            center: [-122.447303, 37.753574]
+        });
+    </script>
+    <script>
+
+    var states = ["SC", "OR", "CA", "NC", "UT", "OK", "NE", "LA", "MN", "FL", "TX", "RI", "VA", "MI", "AZ", "TN", "WA", "GA", "AL", "MD",
+    "CO", "PA", "NY", "IL", "CT", "NJ", "NH", "MA", "OH", "MO", "DE", "IN", "KY", "IA", "NV", "WI", "NM", "KS", "MS", "ME", "WV", "ID", "VT",
+    "WY", "AR", "MT", "SD", "ND"]
+
+    map.on('load', function () {
+
+        var layers = map.getStyle().layers;
+
+        var labelLayerId;
+        for (var i = 0; i < layers.length; i++) {
+            if (layers[i].type === 'symbol' && layers[i].layout['text-field']) {
+                labelLayerId = layers[i].id;
+                break;
+            }
+        }
+
+        times = [
+            '00:00 - 23:59',
+            '<i class="fas fa-moon"></i> 00:00 - 00:59',
+            '<i class="fas fa-moon"></i> 01:00 - 01:59',
+            '<i class="fas fa-moon"></i> 02:00 - 02:59',
+            '<i class="fas fa-moon"></i> 03:00 - 03:59',
+            '<i class="fas fa-moon"></i> 04:00 - 04:59',
+            '<i class="fas fa-moon"></i> 05:00 - 05:59',
+            '<i class="fas fa-moon"></i> 06:00 - 06:59',
+            '<i class="fas fa-moon"></i> 07:00 - 07:59',
+            '<i class="fas fa-sun"></i> 08:00 - 08:59',
+            '<i class="fas fa-sun"></i> 09:00 - 09:59',
+            '<i class="fas fa-sun"></i> 10:00 - 10:59',
+            '<i class="fas fa-sun"></i> 11:00 - 11:59',
+            '<i class="fas fa-sun"></i> 12:00 - 12:59',
+            '<i class="fas fa-sun"></i> 13:00 - 13:59',
+            '<i class="fas fa-sun"></i> 14:00 - 14:59',
+            '<i class="fas fa-sun"></i> 15:00 - 15:59',
+            '<i class="fas fa-sun"></i> 16:00 - 16:59',
+            '<i class="fas fa-sun"></i> 17:00 - 17:59',
+            '<i class="fas fa-moon"></i> 18:00 - 18:59',
+            '<i class="fas fa-moon"></i> 19:00 - 19:59',
+            '<i class="fas fa-moon"></i> 20:00 - 20:59',
+            '<i class="fas fa-moon"></i> 21:00 - 21:59',
+            '<i class="fas fa-moon"></i> 22:00 - 22:59',
+            '<i class="fas fa-moon"></i> 23:00 - 23:59',
+        ];
+
+        severities = [
+            'All',
+            'Least',
+            'Medium',
+            'High',
+            'Extreme'
+        ];
+
+        function filterByTime(time) {
+            return;
+            var filters = ['==', 'time', time];
+
+            states.forEach(state => {
+                map.setFilter(`accidents_${state}`, filters);
+            });
+            
+            // Set the label to the month
+            document.getElementById('time').innerHTML = times[time];
+        }
+
+        function filterBySeverity(severity) {
+
+            if (severity > 0) {
+                var filters = ['==', 'severity', severity];
+            } else {
+                var filters = ['>', 'severity', severity]
+            }
+
+            states.forEach(state => {
+                map.setFilter(`accidents_${state}`, filters);
+            });
+            
+            // Set the label to the month
+            document.getElementById('severity').innerHTML = severities[severity];
+        }
+
+        states.forEach(state => {
+
+            map.addSource(`layer_${state}`, {
+                type: "geojson",
+                data: "static/data/"+state+".json",
+                cluster: true,
+                clusterMaxZoom: 9, // Max zoom to cluster points on
+                clusterRadius: 20 // Radius of each cluster when clustering points (defaults to 50)*/
+            });
+
+            map.addLayer({
+                'id': `accidents_${state}`,
+                'type': 'circle',
+                source: `layer_${state}`,
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 1.75,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using a match expression
+                    // https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-match
+                    'circle-color': [
+                            'match',
+                            ['get', 'severity'],
+                            1.0, '#ccff33',
+                            2.0, '#BBAA22',
+                            3.0, '#AA5511',
+                            4.0, '#990000',
+                            '#F00' //other
+                        ]
+                }
+            });
+        });
+
+        filterBySeverity(0);
+        filterByTime(0);
+
+        document
+            .getElementById('slider-severity')
+            .addEventListener('input', function(e) {
+            var severity = parseInt(e.target.value, 10);
+            filterBySeverity(severity);
+        });
+
+        document
+            .getElementById('slider')
+            .addEventListener('input', function(e) {
+            var month = parseInt(e.target.value, 10);
+            filterByTime(month);
+        });
+    });
+    </script>
+</html>
