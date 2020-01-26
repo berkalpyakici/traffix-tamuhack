@@ -136,3 +136,6 @@ dmypy.json
 
 # Ignore idea files
 .idea
+
+# Ignore MaxOS files
+.DS_Store
