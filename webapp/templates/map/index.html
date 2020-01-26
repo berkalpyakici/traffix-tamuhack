@@ -164,7 +164,10 @@
         }); */
     </script>
     <script>
-    var url = `{% static "data/OH.json" %}`;
+
+    var states = ["SC", "OR", "CA", "NC", "UT", "OK", "NE", "LA", "MN", "FL", "TX", "RI", "VA", "MI", "AZ", "TN", "WA", "GA", "AL", "MD",
+    "CO", "PA", "NY", "IL", "CT", "NJ", "NH", "MA", "OH", "MO", "DE", "IN", "KY", "IA", "NV", "WI", "NM", "KS", "MS", "ME", "WV", "ID", "VT",
+    "WY", "AR", "MT", "SD", "ND"]
 
     map.on('load', function () {
 
@@ -178,38 +181,39 @@
             }
         }
 
-        map.addSource("my_data", {
-            type: "geojson",
-            data: url, //"./GeoObs.json",
-            cluster: true,
-            clusterMaxZoom: 9, // Max zoom to cluster points on
-            clusterRadius: 20 // Radius of each cluster when clustering points (defaults to 50)*/
-        });
+        states.forEach(state => {
 
+            map.addSource(`layer_${state}`, {
+                type: "geojson",
+                data: "static/data/"+state+".json",
+                cluster: true,
+                clusterMaxZoom: 9, // Max zoom to cluster points on
+                clusterRadius: 20 // Radius of each cluster when clustering points (defaults to 50)*/
+            });
 
-        map.addLayer({
-            'id': 'population',
-            'type': 'circle',
-            source: 'my_data',
-            // 'source-layer': 'my_data',
-            'paint': {
-                // make circles larger as the user zooms from z12 to z22
-                'circle-radius': {
-                    'base': 1.75,
-                    'stops': [[12, 2], [22, 180]]
-                },
-                // color circles by ethnicity, using a match expression
-                // https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-match
-                'circle-color': [
-                        'match',
-                        ['get', 'severity'],
-                        1.0, '#ccff33',
-                        2.0, '#BBAA22',
-                        3.0, '#AA5511',
-                        4.0, '#990000',
-                        '#F00' //other
-                    ]
-            }
+            map.addLayer({
+                'id': `accidents_${state}`,
+                'type': 'circle',
+                source: `layer_${state}`,
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 1.75,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using a match expression
+                    // https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-match
+                    'circle-color': [
+                            'match',
+                            ['get', 'severity'],
+                            1.0, '#ccff33',
+                            2.0, '#BBAA22',
+                            3.0, '#AA5511',
+                            4.0, '#990000',
+                            '#F00' //other
+                        ]
+                }
+            });
         });
     });
     </script>
