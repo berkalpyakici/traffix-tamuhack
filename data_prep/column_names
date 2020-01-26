@@ -3,6 +3,7 @@
 'TMC' - categorized
 'Severity' - keep, categorical
 TODO: - SEPARATE INTO DATE AND TIME
+
 'Start_Time' - nice, none missing
 'End_Time' - nice, none missing
 'Start_Lat' - complete, normal
@@ -22,18 +23,24 @@ ADDRESS of Accident
 'Zipcode'
 'Country'
 
-'Timezone'
-'Airport_Code'
-'Weather_Timestamp'
+'Timezone' - Dropper
+'Airport_Code' - Dropped
+'Weather_Timestamp' - Cleaned
+
+
+# All of these values were cleaned and normalized
 'Temperature(F)'
 'Wind_Chill(F)'
 'Humidity(%)'
 'Pressure(in)'
 'Visibility(mi)'
-'Wind_Direction'
 'Wind_Speed(mph)'
 'Precipitation(in)'
-'Weather_Condition'
+
+'Wind_Direction' - Cleaned, filled
+'Weather_Condition' - CONTAINS SLASHES, SPLIT UP INTO LIST AND VECTORIZE
+
+These are all booleans:
 'Amenity'
 'Bump'
 'Crossing'
@@ -47,6 +54,9 @@ ADDRESS of Accident
 'Traffic_Calming'
 'Traffic_Signal'
 'Turning_Loop'
+
+Dropped all of the ones missing this time. Can be used to make feature vectors.
+TODO: Indicate if it was or was not nighttime
 'Sunrise_Sunset'
 'Civil_Twilight'
 'Nautical_Twilight'
